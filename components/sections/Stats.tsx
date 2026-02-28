@@ -28,6 +28,7 @@ const statsData = [
     label: "Tidak Terdiagnosis",
     accent: "amber",
     suffix: "%",
+    source: "IDF & Kemenkes 2023",
   },
   {
     icon: "⚡",
@@ -123,6 +124,11 @@ function StatCard({ stat, index }: { stat: typeof statsData[0]; index: number })
 
       {/* Label */}
       <p className="text-[#94A3B8] text-sm font-dm-sans">{stat.label}</p>
+      
+      {/* Source */}
+      {stat.source && (
+        <p className="text-xs text-[#64748B] mt-1 font-dm-sans">{stat.source}</p>
+      )}
     </motion.div>
   );
 }

@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import PredictPage from '@/components/predict/PredictPage'
+import DiabetesPageClient from './DiabetesPageClient'
 
 export const metadata: Metadata = {
   title: 'Prediksi Risiko Diabetes - HealthPredict',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function DiabetesPage() {
-  return <PredictPage type="diabetes" />
+  return <DiabetesPageClient />
 }

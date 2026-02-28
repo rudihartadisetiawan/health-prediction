@@ -1,0 +1,1 @@
+{"version":3,"file":"predict.controller.d.ts","sourceRoot":"","sources":["../../src/controllers/predict.controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAA;AAK3C,wBAAsB,eAAe,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ,GAAG,OAAO,CAAC,IAAI,CAAC,CAqBhF;AAED,wBAAsB,YAAY,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ,GAAG,OAAO,CAAC,IAAI,CAAC,CAqB7E"}

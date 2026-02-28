@@ -46,7 +46,7 @@ export default function PredictPage({ type }: PredictPageProps) {
               <div className="bg-[#111827] rounded-2xl p-6 border border-gray-800">
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-4xl">{config.icon}</span>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="text-xl font-bold text-white">
                     {config.title}
                   </h1>
                 </div>

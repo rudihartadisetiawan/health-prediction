@@ -48,7 +48,7 @@ export default function StepBasicData({ register, errors, watch }: StepBasicData
               max: { value: 120, message: 'Usia maksimal 120 tahun' },
             })}
             className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all"
-            placeholder="Masukkan usia"
+            placeholder="Contoh: 35"
           />
           {errors.age && (
             <p className="mt-1 text-xs text-red-400">{String(errors.age.message)}</p>
@@ -107,7 +107,7 @@ export default function StepBasicData({ register, errors, watch }: StepBasicData
                 max: { value: 300, message: 'Berat badan maksimal 300 kg' },
               })}
               className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all pr-12"
-              placeholder="0"
+              placeholder="Contoh: 70"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
               kg
@@ -134,7 +134,7 @@ export default function StepBasicData({ register, errors, watch }: StepBasicData
                 max: { value: 250, message: 'Tinggi badan maksimal 250 cm' },
               })}
               className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 transition-all pr-12"
-              placeholder="0"
+              placeholder="Contoh: 165"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
               cm

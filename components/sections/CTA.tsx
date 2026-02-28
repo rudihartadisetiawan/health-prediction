@@ -2,15 +2,30 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useTheme } from "@/contexts/ThemeContext";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 
 export default function CTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const router = useRouter();
+  const { setActiveTab } = useTheme();
+
+  const handleDiabetesClick = () => {
+    setActiveTab('diabetes');
+    router.push('/predict/diabetes');
+  };
+
+  const handleHeartClick = () => {
+    setActiveTab('heart');
+    router.push('/predict/heart');
+  };
 
   return (
     <section
+      id="cta"
       ref={ref}
       className="py-20 relative overflow-hidden"
       style={{
@@ -76,10 +91,10 @@ export default function CTA() {
             transition={{ duration: 0.4, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
           >
-            <Button variant="primary-diabetes" size="lg" href="/predict/diabetes">
+            <Button variant="primary-diabetes" size="lg" onClick={handleDiabetesClick}>
               🩸 Cek Diabetes
             </Button>
-            <Button variant="primary-heart" size="lg" href="/predict/heart">
+            <Button variant="primary-heart" size="lg" onClick={handleHeartClick}>
               ❤️ Cek Jantung
             </Button>
           </motion.div>

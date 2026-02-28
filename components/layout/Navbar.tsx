@@ -2,77 +2,109 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "../ui/Button";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Navbar() {
   const { activeTab, setActiveTab } = useTheme();
   const [scrolled, setScrolled] = useState(false);
-  const [prediksiOpen, setPrediksiOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState("Beranda");
+  const [activeSection, setActiveSection] = useState("beranda");
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Track active section using scroll position (more accurate than IntersectionObserver)
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const sectionIds = ['beranda', 'edukasi', 'cta', 'about'];
+      
+      let currentSection = 'beranda';
+      let minDistance = Infinity;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        const rect = el.getBoundingClientRect();
+        const distance = Math.abs(rect.top);
+        
+        // Section is in viewport (top is at or above 50% of viewport)
+        if (rect.top <= windowHeight * 0.5 && distance < minDistance) {
+          minDistance = distance;
+          currentSection = id;
+        }
+      });
+
+      setActiveSection(currentSection);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Run once on mount
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      
-      // Update active nav based on scroll position
-      if (pathname !== "/") {
-        setActiveNav("Prediksi");
-        return;
-      }
-      
-      const edukasiSection = document.getElementById("edukasi");
-      const aboutSection = document.getElementById("about");
-      
-      if (aboutSection && window.scrollY >= aboutSection.offsetTop - 300) {
-        setActiveNav("Tentang");
-      } else if (edukasiSection && window.scrollY >= edukasiSection.offsetTop - 200) {
-        setActiveNav("Edukasi");
-      } else {
-        setActiveNav("Beranda");
-      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, []);
 
-  const handleAboutClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const aboutSection = document.getElementById("about");
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" });
-    }
-    setMobileMenuOpen(false);
-  };
-
-  const handleEdukasiClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (pathname !== "/") {
-      window.location.href = "/#edukasi";
+  // Handle navigation for Beranda, Edukasi, Tentang
+  const handleNavClick = (sectionId: string) => {
+    if (pathname === "/") {
+      // Already on home page - just scroll
+      const el = document.getElementById(sectionId);
+      el?.scrollIntoView({ behavior: "smooth" });
     } else {
-      const edukasiSection = document.getElementById("edukasi");
-      if (edukasiSection) {
-        edukasiSection.scrollIntoView({ behavior: "smooth" });
-      }
+      // Navigate to home page with hash
+      router.push(`/#${sectionId}`);
     }
-    setMobileMenuOpen(false);
   };
 
-  const handleTabChange = (tab: "diabetes" | "heart") => {
-    if (setActiveTab) {
-      setActiveTab(tab);
+  // Handle Diabetes/Jantung button clicks
+  const handleTabClick = (tab: "diabetes" | "heart") => {
+    setActiveTab(tab);
+    if (pathname.startsWith("/predict")) {
+      router.push(`/predict/${tab}`);
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // If on home page, just setActiveTab (no navigation needed)
   };
 
-  const navLinks = [
-    { name: "Beranda", href: "/" },
-    { name: "Edukasi", href: "/#edukasi" },
-  ];
+  // Handle Prediksi button click
+  const handlePrediksiClick = () => {
+    if (pathname.startsWith('/predict')) {
+      // Already on prediction page - scroll to top of form
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (pathname === '/') {
+      // On home page - scroll to CTA section
+      document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // On other page - navigate to home page then to CTA
+      router.push('/#cta');
+    }
+  };
+
+  // Check if a nav menu should be active
+  const isNavActive = (name: string) => {
+    if (name === "Prediksi") {
+      return pathname.startsWith("/predict") || activeSection === "cta";
+    }
+    if (pathname === "/") {
+      if (name === "Beranda") return activeSection === "beranda";
+      if (name === "Edukasi") return activeSection === "edukasi";
+      if (name === "Tentang") return activeSection === "about";
+    }
+    return false;
+  };
+
+  const isPrediksiActive = pathname.startsWith("/predict") || activeSection === "cta";
 
   return (
     <nav
@@ -101,139 +133,114 @@ export default function Navbar() {
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden md:flex items-center gap-6 flex-1 justify-center">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => {
-                  setActiveNav(link.name);
-                  if (link.name === "Beranda") {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }
-                }}
-                className="relative inline-block text-sm font-medium transition-colors"
-              >
-                <span className={activeNav === link.name ? "text-white" : "text-white/80 hover:text-white"}>
-                  {link.name}
-                </span>
-                {activeNav === link.name && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#06B6D4]"
-                    transition={{ duration: 0.2 }}
-                  />
-                )}
-              </Link>
-            ))}
-
-            {/* Prediksi Dropdown */}
-            <div className="relative inline-block">
-              <button
-                onMouseEnter={() => setPrediksiOpen(true)}
-                onMouseLeave={() => setPrediksiOpen(false)}
-                onClick={() => setActiveNav("Prediksi")}
-                className="relative text-sm font-medium transition-colors"
-              >
-                <span className={activeNav === "Prediksi" ? "text-white" : "text-white/80 hover:text-white"}>
-                  Prediksi
-                </span>
-                {activeNav === "Prediksi" && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#06B6D4]"
-                    transition={{ duration: 0.2 }}
-                  />
-                )}
-              </button>
-              <AnimatePresence>
-                {prediksiOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 mt-2 w-56 bg-[#111827] border border-white/[0.07] rounded-xl overflow-hidden shadow-2xl"
-                  >
-                    <Link
-                      href="/predict/diabetes"
-                      onClick={() => setActiveNav("Prediksi")}
-                      className="block px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/[0.05] transition-colors"
-                    >
-                      🩸 Prediksi Diabetes
-                    </Link>
-                    <Link
-                      href="/predict/heart"
-                      onClick={() => setActiveNav("Prediksi")}
-                      className="block px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/[0.05] transition-colors"
-                    >
-                      ❤️ Prediksi Jantung
-                    </Link>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Tentang */}
-            <Link
-              href="#about"
-              onClick={(e) => {
-                handleAboutClick(e);
-                setActiveNav("Tentang");
-              }}
+            {/* Beranda */}
+            <button
+              onClick={() => handleNavClick("beranda")}
               className="relative inline-block text-sm font-medium transition-colors"
             >
-              <span className={activeNav === "Tentang" ? "text-white" : "text-white/80 hover:text-white"}>
-                Tentang
+              <span className={isNavActive("Beranda") ? "text-white" : "text-[#94A3B8] hover:text-white"}>
+                Beranda
               </span>
-              {activeNav === "Tentang" && (
-                <motion.span
-                  layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#06B6D4]"
-                  transition={{ duration: 0.2 }}
+              {isNavActive("Beranda") && (
+                <span
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#3B82F6] rounded-full transition-opacity duration-150"
                 />
               )}
-            </Link>
+            </button>
+
+            {/* Edukasi */}
+            <button
+              onClick={() => handleNavClick("edukasi")}
+              className="relative inline-block text-sm font-medium transition-colors"
+            >
+              <span className={isNavActive("Edukasi") ? "text-white" : "text-[#94A3B8] hover:text-white"}>
+                Edukasi
+              </span>
+              {isNavActive("Edukasi") && (
+                <span
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#3B82F6] rounded-full transition-opacity duration-150"
+                />
+              )}
+            </button>
+
+            {/* Prediksi - Direct navigate, no dropdown */}
+            <button
+              onClick={handlePrediksiClick}
+              className="relative inline-block text-sm font-medium transition-colors"
+            >
+              <span className={isPrediksiActive ? "text-white" : "text-[#94A3B8] hover:text-white"}>
+                Prediksi
+              </span>
+              {isPrediksiActive && (
+                <span
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#3B82F6] rounded-full transition-opacity duration-150"
+                />
+              )}
+            </button>
+
+            {/* Tentang */}
+            <button
+              onClick={() => handleNavClick("about")}
+              className="relative inline-block text-sm font-medium transition-colors"
+            >
+              <span className={isNavActive("Tentang") ? "text-white" : "text-[#94A3B8] hover:text-white"}>
+                Tentang
+              </span>
+              {isNavActive("Tentang") && (
+                <span
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#3B82F6] rounded-full transition-opacity duration-150"
+                />
+              )}
+            </button>
           </div>
 
-          {/* CTA Buttons - Right Corner */}
+          {/* CTA Buttons - Right Corner (Diabetes/Jantung) */}
           <div className="hidden md:flex items-center gap-3">
             <div className="inline-flex p-1 bg-[#1A2236] rounded-full border border-white/[0.07]">
-              <motion.button
-                onClick={() => handleTabChange("diabetes")}
+              <button
+                onClick={() => handleTabClick("diabetes")}
                 className={`
                   relative px-4 py-1.5 rounded-full text-xs font-medium transition-colors
                   ${activeTab === "diabetes" ? "text-white" : "text-white/60"}
                 `}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                {activeTab === "diabetes" && (
-                  <motion.div
-                    layoutId="tab-bg-navbar"
-                    className="absolute inset-0 bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
+                <span
+                  className={`
+                    absolute inset-0 rounded-full transition-all duration-150
+                    ${activeTab === "diabetes" 
+                      ? "opacity-100 scale-100" 
+                      : "opacity-0 scale-95"
+                    }
+                  `}
+                  style={{ 
+                    background: 'linear-gradient(135deg, #3B82F6, #06B6D4)',
+                    transformOrigin: 'center'
+                  }}
+                />
                 <span className="relative z-10">🩸 Diabetes</span>
-              </motion.button>
-              <motion.button
-                onClick={() => handleTabChange("heart")}
+              </button>
+              <button
+                onClick={() => handleTabClick("heart")}
                 className={`
                   relative px-4 py-1.5 rounded-full text-xs font-medium transition-colors
                   ${activeTab === "heart" ? "text-white" : "text-white/60"}
                 `}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                {activeTab === "heart" && (
-                  <motion.div
-                    layoutId="tab-bg-navbar"
-                    className="absolute inset-0 bg-gradient-to-r from-[#EF4444] to-[#F59E0B] rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)]"
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
+                <span
+                  className={`
+                    absolute inset-0 rounded-full transition-all duration-150
+                    ${activeTab === "heart" 
+                      ? "opacity-100 scale-100" 
+                      : "opacity-0 scale-95"
+                    }
+                  `}
+                  style={{ 
+                    background: 'linear-gradient(135deg, #EF4444, #F59E0B)',
+                    transformOrigin: 'center'
+                  }}
+                />
                 <span className="relative z-10">❤️ Jantung</span>
-              </motion.button>
+              </button>
             </div>
           </div>
 
@@ -275,66 +282,65 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0A0F1E] border-b border-white/[0.07]"
+            transition={{ duration: 0.15 }}
+            className="md:hidden bg-[#0A0F1E] border-b border-white/[0.07] overflow-hidden"
           >
             <div className="px-4 py-4 space-y-4">
-              <Link
-                href="/"
-                className="block text-sm font-medium text-white/80 hover:text-white"
-                onClick={() => setMobileMenuOpen(false)}
+              <button
+                onClick={() => {
+                  handleNavClick("beranda");
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left text-sm font-medium text-white/80 hover:text-white"
               >
                 Beranda
-              </Link>
-              <Link
-                href="/#edukasi"
-                className="block text-sm font-medium text-white/80 hover:text-white"
-                onClick={() => setMobileMenuOpen(false)}
+              </button>
+              <button
+                onClick={() => {
+                  handleNavClick("edukasi");
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left text-sm font-medium text-white/80 hover:text-white"
               >
                 Edukasi
-              </Link>
-              <div className="pt-2 border-t border-white/[0.07]">
-                <p className="text-xs text-white/50 mb-2">Prediksi</p>
-                <Link
-                  href="/predict/diabetes"
-                  className="block py-2 text-sm text-white/80 hover:text-white"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  🩸 Prediksi Diabetes
-                </Link>
-                <Link
-                  href="/predict/heart"
-                  className="block py-2 text-sm text-white/80 hover:text-white"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  ❤️ Prediksi Jantung
-                </Link>
-              </div>
-              <Link
-                href="#about"
-                onClick={handleAboutClick}
-                className="block text-sm font-medium text-white/80 hover:text-white"
+              </button>
+              <button
+                onClick={() => {
+                  handlePrediksiClick();
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left text-sm font-medium text-white/80 hover:text-white"
+              >
+                Prediksi
+              </button>
+              <button
+                onClick={() => {
+                  handleNavClick("about");
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left text-sm font-medium text-white/80 hover:text-white"
               >
                 Tentang
-              </Link>
+              </button>
               <div className="pt-4 border-t border-white/[0.07] flex flex-col gap-2">
-                <Button
-                  variant="primary-diabetes"
-                  size="md"
-                  href="/predict/diabetes"
-                  className="w-full"
-                  onClick={() => setMobileMenuOpen(false)}
+                <button
+                  onClick={() => {
+                    handleTabClick("diabetes");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] text-white text-sm font-medium"
                 >
                   🩸 Prediksi Diabetes
-                </Button>
-                <Button
-                  variant="primary-heart"
-                  size="md"
-                  href="/predict/heart"
-                  className="w-full"
-                  onClick={() => setMobileMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => {
+                    handleTabClick("heart");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 rounded-xl bg-gradient-to-r from-[#EF4444] to-[#F59E0B] text-white text-sm font-medium"
                 >
                   ❤️ Prediksi Jantung
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>

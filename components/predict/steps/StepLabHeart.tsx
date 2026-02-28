@@ -36,7 +36,7 @@ export default function StepLabHeart({ register, errors }: StepLabHeartProps) {
               max: { value: 500, message: 'Nilai tidak valid' },
             })}
             className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-white placeholder-gray-500 transition-all pr-20"
-            placeholder="0"
+            placeholder="Contoh: 200"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
             mg/dL
@@ -73,7 +73,7 @@ export default function StepLabHeart({ register, errors }: StepLabHeartProps) {
               max: { value: 250, message: 'Nilai tidak valid' },
             })}
             className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-white placeholder-gray-500 transition-all pr-16"
-            placeholder="0"
+            placeholder="Contoh: 120"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
             mmHg
@@ -110,7 +110,7 @@ export default function StepLabHeart({ register, errors }: StepLabHeartProps) {
               max: { value: 250, message: 'Nilai tidak valid' },
             })}
             className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-white placeholder-gray-500 transition-all pr-16"
-            placeholder="0"
+            placeholder="Contoh: 150"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
             bpm
@@ -132,9 +132,9 @@ export default function StepLabHeart({ register, errors }: StepLabHeartProps) {
           {...register('fastingBS', { required: 'Pilih salah satu' })}
           className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-white transition-all"
         >
-          <option value="">Pilih...</option>
-          <option value="no">Tidak</option>
-          <option value="yes">Ya</option>
+          <option value="">Pilih kondisi...</option>
+          <option value="no">Tidak (≤ 120 mg/dL)</option>
+          <option value="yes">Ya (> 120 mg/dL)</option>
         </select>
         {errors.fastingBS && (
           <p className="mt-1 text-xs text-red-400">{String(errors.fastingBS.message)}</p>
@@ -152,10 +152,10 @@ export default function StepLabHeart({ register, errors }: StepLabHeartProps) {
           {...register('chestPainType', { required: 'Pilih salah satu' })}
           className="w-full px-4 py-3 bg-[#1A2236] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-white transition-all"
         >
-          <option value="">Pilih...</option>
-          <option value="none">Tidak ada</option>
-          <option value="atypical">Atipikal</option>
-          <option value="typical">Tipikal Angina</option>
+          <option value="">Pilih tipe...</option>
+          <option value="none">Tidak ada nyeri</option>
+          <option value="atypical">Nyeri atipikal</option>
+          <option value="typical">Nyeri tipikal angina</option>
         </select>
         {errors.chestPainType && (
           <p className="mt-1 text-xs text-red-400">{String(errors.chestPainType.message)}</p>

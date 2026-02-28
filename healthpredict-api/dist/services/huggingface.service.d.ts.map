@@ -1,0 +1,1 @@
+{"version":3,"file":"huggingface.service.d.ts","sourceRoot":"","sources":["../../src/services/huggingface.service.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,aAAa,EAAE,UAAU,EAAE,MAAM,wBAAwB,CAAA;AAkClE,wBAAsB,qBAAqB,CAAC,KAAK,EAAE,aAAa,GAAG,OAAO,CAAC,MAAM,CAAC,CAiBjF;AAED,wBAAsB,kBAAkB,CAAC,KAAK,EAAE,UAAU,GAAG,OAAO,CAAC,MAAM,CAAC,CAwB3E"}

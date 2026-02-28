@@ -65,20 +65,34 @@ function Badge({ variant, children }: BadgeProps) {
 
 export default function Hero() {
   const { activeTab, setActiveTab } = useTheme();
+  const scrollPosRef = React.useRef(0);
   const [scrollPos, setScrollPos] = React.useState(0);
-  const [direction, setDirection] = React.useState(0);
+  const rafRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setScrollPos(window.scrollY);
+      // Update ref immediately for latest value
+      scrollPosRef.current = window.scrollY;
+      
+      // Use requestAnimationFrame for smooth updates
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      
+      rafRef.current = requestAnimationFrame(() => {
+        setScrollPos(scrollPosRef.current);
+      });
     };
+    
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, []);
-
-  React.useEffect(() => {
-    setDirection(activeTab === "diabetes" ? -1 : 1);
-  }, [activeTab]);
 
   // Parallax calculations
   const backgroundY = Math.min(scrollPos * 0.2, 200);
@@ -138,6 +152,7 @@ export default function Hero() {
 
   return (
     <section
+      id="beranda"
       className="relative min-h-screen pt-40 pb-20 overflow-hidden px-6 md:px-20"
       style={{
         background:

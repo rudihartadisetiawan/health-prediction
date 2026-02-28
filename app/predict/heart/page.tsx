@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import PredictPage from '@/components/predict/PredictPage'
+import HeartPageClient from './HeartPageClient'
 
 export const metadata: Metadata = {
   title: 'Prediksi Risiko Penyakit Jantung - HealthPredict',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function HeartPage() {
-  return <PredictPage type="heart" />
+  return <HeartPageClient />
 }

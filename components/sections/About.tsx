@@ -5,16 +5,15 @@ import { motion, useInView } from "framer-motion";
 import Card from "../ui/Card";
 
 const accuracyStats = [
-  { label: "Akurasi", value: "89%" },
-  { label: "Precision", value: "87%" },
-  { label: "Recall", value: "91%" },
-  { label: "AUC-ROC", value: "0.94" },
+  { label: "Akurasi", value: "78%" },
+  { label: "Precision", value: "72%" },
+  { label: "Recall", value: "76%" },
+  { label: "AUC-ROC", value: "0.86" },
 ];
 
 const datasets = [
   { name: "Pima Indians Diabetes", disease: "Diabetes", records: "768 records" },
   { name: "UCI Heart Disease", disease: "Jantung", records: "303 records" },
-  { name: "Framingham Heart Study", disease: "Jantung", records: "4,240 records" },
 ];
 
 export default function About() {
@@ -69,6 +68,9 @@ export default function About() {
               </motion.div>
             ))}
           </div>
+          <p className="text-xs text-[#64748B] text-center mt-4 col-span-2">
+            *Rata-rata performa model diabetes & jantung
+          </p>
         </motion.div>
 
         {/* Sub-section 2: Metodologi & Dataset */}
@@ -117,9 +119,9 @@ export default function About() {
             </div>
 
             <p className="text-[#94A3B8] text-sm font-dm-sans leading-relaxed">
-              Model kami menggunakan ensemble <strong className="text-white">Random Forest + XGBoost</strong> yang 
-              dikombinasikan untuk menghasilkan prediksi yang lebih akurat dan robust. 
-              Teknik preprocessing data yang canggih memastikan kualitas input yang optimal.
+              Model kami menggunakan <strong className="text-white">Random Forest dengan hyperparameter tuning</strong> untuk
+              menghasilkan prediksi yang lebih akurat dan robust. Teknik preprocessing
+              data yang canggih memastikan kualitas input yang optimal.
             </p>
           </Card>
 
@@ -154,30 +156,6 @@ export default function About() {
               </table>
             </div>
           </Card>
-        </motion.div>
-
-        {/* Sub-section 3: Disclaimer */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="bg-[rgba(245,158,11,0.05)] border-l-4 border-[#F59E0B] rounded-r-xl p-6 flex gap-4">
-            <span className="text-3xl flex-shrink-0">⚕️</span>
-            <div>
-              <h4 className="font-syne font-semibold text-white mb-2">
-                Disclaimer Medis
-              </h4>
-              <p className="text-[#94A3B8] text-sm font-dm-sans leading-relaxed">
-                Hasil prediksi yang disediakan oleh HealthPredict.id bersifat <strong>informatif</strong> dan{" "}
-                <strong>bukan merupakan diagnosis medis</strong>. Platform ini dirancang sebagai alat bantu 
-                untuk meningkatkan kesadaran akan risiko kesehatan, namun tidak menggantikan konsultasi 
-                dengan tenaga medis profesional. Selalu konsultasikan hasil prediksi Anda dengan dokter 
-                atau tenaga kesehatan yang berkualifikasi untuk diagnosis dan pengobatan yang tepat.
-              </p>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>
